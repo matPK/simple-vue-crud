@@ -43037,11 +43037,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             axios.put('/api/cars/' + data.id, data).then(function (response) {
                 var editedCar = response.data;
                 if (response.status === 200) {
+                    var cars = _this4.cars;
                     var car = _this4.getCarById(data.id);
-                    car.isEditing = false;
-                    car.model = editedCar.model;
-                    car.year = editedCar.year;
-                    car.brand_id = editedCar.brand_id;
+                    var tempCar = editedCar;
+                    tempCar.isEditing = false;
+                    cars.splice(cars.indexOf(car), 1, tempCar);
                 } else if (response.status === 422) {
                     console.log(editedCar);
                 }
@@ -43053,7 +43053,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         handleCancel: function handleCancel(id) {
             var car = this.getCarById(id);
+            var cars = this.cars;
             car.isEditing = false;
+            cars.splice(cars.indexOf(car), 1, car);
         },
         createCar: function createCar() {
             var _this5 = this;

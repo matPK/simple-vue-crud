@@ -228,11 +228,11 @@
                     .then(response => {
                         let editedCar = response.data;
                         if(response.status === 200){
+                            let cars = this.cars;
                             let car = this.getCarById(data.id);
-                            car.isEditing = false;
-                            car.model = editedCar.model;
-                            car.year = editedCar.year;
-                            car.brand_id = editedCar.brand_id;
+                            let tempCar = editedCar;
+                            tempCar.isEditing = false;
+                            cars.splice(cars.indexOf(car), 1, tempCar);
                         }else if(response.status === 422){
                             console.log(editedCar);
                         }
@@ -244,7 +244,9 @@
             },
             handleCancel(id){
                 let car = this.getCarById(id);
+                let cars = this.cars;
                 car.isEditing = false;
+                cars.splice(cars.indexOf(car), 1, car);
             },
             createCar(){
                 let data = this.createForm;
