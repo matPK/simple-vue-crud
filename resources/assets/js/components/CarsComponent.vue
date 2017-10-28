@@ -1,19 +1,41 @@
+<style>
+    .loader {
+        border: 5px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 5px solid #3498db;
+        width: 20px;
+        height: 20px;
+        -webkit-animation: spin 0.5s linear infinite;
+        animation: spin 0.5s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
 <template>
     <div>
         <table class="table">
             <tbody>
             <tr v-for="car in cars">
                 <td>
-                    {{car.model}}
+                    <div v-if="car.isEditing" class="loader"></div>
+                    <div v-else>{{car.model}}</div>
                 </td>
                 <td class="text-right">
-                    <a v-on:click="editForm = car" data-toggle="modal" data-target="#editModal" class="btn btn-info btn-xs">
+                    <a @click="handleEdit(car)" data-toggle="modal" data-target="#editModal" class="btn btn-info btn-xs">
                         <i class="fa fa-pencil"></i>
                     </a>
-                    <a v-on:click="deleteId = car.id" data-toggle="modal" data-target="#confirmDelete" class="btn btn-danger btn-xs">
+                    <a @click="deleteId = car.id" data-toggle="modal" data-target="#confirmDelete" class="btn btn-danger btn-xs">
                         <i class="fa fa-trash"></i>
                     </a>
-
                 </td>
             </tr>
             </tbody>
@@ -36,7 +58,7 @@
                         <p>Após concluir esta ação, ela é irreversível!</p>
                         <p>Tem certeza que deseja prosseguir?</p>
                         <div class="text-right">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal" v-on:click="deleteCar(deleteId)">Sim</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" @click="deleteCar(deleteId)">Sim</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
@@ -52,7 +74,6 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title text-success text-center">Editar</h4>
                     </div>
                     <div class="modal-body">
@@ -73,8 +94,8 @@
                             </div>
 
                             <div class="text-right">
-                                <button type="button" class="btn btn-success" data-dismiss="modal" v-on:click="editCar()">Salvar</button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-success" data-dismiss="modal" @click="editCar()">Salvar</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" @click="handleCancel(editForm.id)">Cancelar</button>
                             </div>
                         </form>
                     </div>
@@ -90,7 +111,6 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title text-success text-center">Novo</h4>
                     </div>
                     <div class="modal-body">
@@ -112,7 +132,7 @@
                             </div>
 
                             <div class="text-right">
-                                <button type="button" class="btn btn-success" data-dismiss="modal" v-on:click="createCar()">Criar</button>
+                                <button type="button" class="btn btn-success" data-dismiss="modal" @click="createCar()">Criar</button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                             </div>
                         </form>
@@ -198,28 +218,33 @@
                     });
             },
             popFromCar(id){
-                for(let i in this.cars){
-                    let car = this.cars[i];
-                    if(car.id === id){
-                        this.cars.splice(i, 1);
-                    }
-                }
+                let car = this.getCarById(id), cars = this.cars;
+                let i = cars.indexOf(car);
+                cars.splice(i, 1);
             },
             editCar(){
                 let data = this.editForm;
-                axios.put('/api/cars/' + this.editForm.id, data)
+                axios.put('/api/cars/' + data.id, data)
                     .then(response => {
+                        let editedCar = response.data;
                         if(response.status === 200){
-                            for(let i in this.cars){
-                                if(this.cars[i].id === this.editForm.id){
-                                    this.cars[i].name = response.data.name;
-                                    this.cars[i].description = response.data.description;
-                                }
-                            }
-                        }else if(response.status === 422 ){
-                            console.log(response.data);
+                            let car = this.getCarById(data.id);
+                            car.isEditing = false;
+                            car.model = editedCar.model;
+                            car.year = editedCar.year;
+                            car.brand_id = editedCar.brand_id;
+                        }else if(response.status === 422){
+                            console.log(editedCar);
                         }
                     });
+            },
+            handleEdit(car){
+                car.isEditing = true;
+                this.editForm = Object.assign({}, car);
+            },
+            handleCancel(id){
+                let car = this.getCarById(id);
+                car.isEditing = false;
             },
             createCar(){
                 let data = this.createForm;
@@ -230,10 +255,20 @@
                         }else if(response.status === 422 ){
                             console.log(response.data);
                         }
-                        this.createForm.model = null;
-                        this.createForm.year = null;
-                        this.createForm.brand_id = null;
+                        data.model = null;
+                        data.year = null;
+                        data.brand_id = null;
                     });
+            },
+            getCarById(id){
+                let cars = this.cars;
+                for(let i in cars){
+                    let car = cars[i];
+                    if(car.id === id){
+                        return car;
+                    }
+                }
+                return false;
             }
         }
     }

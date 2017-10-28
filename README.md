@@ -1,16 +1,16 @@
-# Teste para SliceTI
-Repositório para o projeto de teste da Slice-TI
+# Laravel 5 Vue CRUD Component
+Simple SPA using a Vue.js component to handle the CRUD of a simple model.
 
-## Instruções
-Copie ou clone este projeto
+## Instructions
+Download or clone this repository
 
-    git clone https://github.com/matPK/test-dev.git
+    git clone https://github.com/matPK/simple-vue-crud.git
 
-Entre na pasta do projeto e baixe as dependências
+In the folder of the project, install the dependencies
 
     composer update
 
-Copie e renomeie o arquivo ``.env.example`` para ``.env`` e configure nele os dados de conexão ao banco de dados que você criou para a aplicação.
+Copy and rename the ``.env.example`` file to ``.env`` and set into it your database configurations
 
     DB_CONNECTION=mysql
     DB_HOST=host
@@ -19,23 +19,23 @@ Copie e renomeie o arquivo ``.env.example`` para ``.env`` e configure nele os da
     DB_USERNAME=usuário
     DB_PASSWORD=senha
 
-Gere uma chave da aplicação.
+Generate an encryption key for the application
 
     php artisan key:generate
 
-Migre o banco de dados.
+Migrate the database
 
     php artisan migrate
 
-Semeie o banco de dados.
+Seed the database
 
     php artisan db:seed
 
-Rode o servidor local.
+Run local server
 
     php artisan serve
 
-Acesse ``http://localhost:8000`` e teste a aplicação.
+Access ``http://localhost:8000`` and test it.
 
-## Autoria
-Desenvolvido por ``Matheus Adorni Dardenne``.
+## Authorship
+Developed by ``Matheus Adorni Dardenne``.
