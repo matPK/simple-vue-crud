@@ -5,9 +5,7 @@
     <div class="row">
         <div class="col-sm-8 col-sm-offset-2">
             <div class="panel panel-default card">
-                <div class="panel-heading text-center">
-                    <span class="text-success text-bordered">Carros</span>
-                </div>
+                <div class="panel-heading text-center">Carros</div>
                 <cars-component></cars-component>
             </div>
         </div>
