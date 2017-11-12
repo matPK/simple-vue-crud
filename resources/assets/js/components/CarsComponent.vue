@@ -22,7 +22,7 @@
 
 <template>
     <div>
-        <table class="table">
+        <table class="table table-responsive">
             <tbody>
             <tr v-for="car in cars">
                 <td>
@@ -39,10 +39,14 @@
                 </td>
             </tr>
             </tbody>
+            <tfoot>
+                <tr>
+                    <th class="text-center" colspan="2">
+                        <a data-toggle="modal" data-target="#createModal" class="btn btn-primary">Criar Novo</a>
+                    </th>
+                </tr>
+            </tfoot>
         </table>
-        <div class="panel-footer text-center">
-            <a data-toggle="modal" data-target="#createModal" class="btn btn-primary">Criar Novo</a>
-        </div>
 
         <!-- Modal Delete -->
         <div class="modal fade" id="confirmDelete" role="dialog">
